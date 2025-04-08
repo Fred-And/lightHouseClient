@@ -1,6 +1,5 @@
 # Build stage
-FROM node:20-alpine AS builder
-RUN apk add --no-cache openssl1.1-compat
+FROM node:20-bullseye-slim AS builder
 
 WORKDIR /usr/src/app
 
@@ -17,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM nginx:bullseye-slim
 
 # # Copy nginx configuration
 # COPY nginx.conf /etc/nginx/conf.d/default.conf
