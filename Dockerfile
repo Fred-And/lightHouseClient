@@ -16,7 +16,7 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM nginx:bullseye-slim
+FROM nginx:stable-bullseye
 
 # # Copy nginx configuration
 # COPY nginx.conf /etc/nginx/conf.d/default.conf
