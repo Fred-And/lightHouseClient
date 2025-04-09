@@ -3,6 +3,12 @@ FROM node:20-bullseye-slim AS builder
 
 WORKDIR /usr/src/app
 
+# Accept a build-time ARG for your CRA env variable
+ARG REACT_APP_API_URL
+
+# Make it available as an environment variable during build
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 # Copy package files
 COPY package*.json ./
 
