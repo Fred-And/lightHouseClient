@@ -54,12 +54,12 @@ export function CustomerForm({
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
       <form onSubmit={handleSubmit}>
         <DialogTitle>
-          {initialData ? "Edit Customer" : "Add Customer"}
+          {initialData ? "Editar Cliente" : "Novo Cliente"}
         </DialogTitle>
         <DialogContent>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
             <TextField
-              label="Name"
+              label="Nome"
               value={formData.name}
               onChange={(e) =>
                 setFormData({ ...formData, name: e.target.value })
@@ -77,7 +77,7 @@ export function CustomerForm({
               fullWidth
             />
             <TextField
-              label="Phone"
+              label="Telefone"
               value={formData.phone}
               onChange={(e) =>
                 setFormData({ ...formData, phone: e.target.value })
@@ -85,7 +85,7 @@ export function CustomerForm({
               fullWidth
             />
             <TextField
-              label="Address"
+              label="Morada"
               value={formData.address}
               onChange={(e) =>
                 setFormData({ ...formData, address: e.target.value })
@@ -93,7 +93,7 @@ export function CustomerForm({
               fullWidth
             />
             <TextField
-              label="Notes"
+              label="Notas"
               value={formData.notes}
               onChange={(e) =>
                 setFormData({ ...formData, notes: e.target.value })
@@ -107,7 +107,7 @@ export function CustomerForm({
         <DialogActions>
           <Button onClick={onClose}>Cancel</Button>
           <Button type="submit" variant="contained" color="primary">
-            {initialData ? "Save" : "Add"}
+            {initialData ? "Guardar" : "Adicionar"}
           </Button>
         </DialogActions>
       </form>

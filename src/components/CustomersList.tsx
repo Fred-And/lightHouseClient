@@ -10,6 +10,8 @@ import {
   TableHead,
   TableRow,
   Button,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import { CustomerForm } from "./CustomerForm";
@@ -18,6 +20,8 @@ import { useCustomers } from "../hooks/useCustomers";
 export function CustomersList() {
   const { customers, isLoading, createCustomer } = useCustomers();
   const [isCustomerFormOpen, setIsCustomerFormOpen] = React.useState(false);
+  const theme = useTheme();
+  const isSmallUp = useMediaQuery(theme.breakpoints.up("sm"));
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -29,10 +33,16 @@ export function CustomersList() {
         <Typography variant="h4">Clientes</Typography>
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={isSmallUp ? <AddIcon /> : undefined}
           onClick={() => setIsCustomerFormOpen(true)}
+          sx={{
+            minWidth: { xs: "48px", sm: "auto" },
+            "& .MuiButton-startIcon": {
+              margin: isSmallUp ? "auto" : 0,
+            },
+          }}
         >
-          Adicionar Cliente
+          {!isSmallUp ? <AddIcon /> : "Adicionar Cliente"}
         </Button>
       </Box>
 
@@ -42,8 +52,12 @@ export function CustomersList() {
             <TableRow>
               <TableCell>Nome</TableCell>
               <TableCell>Email</TableCell>
-              <TableCell>Telefone</TableCell>
-              <TableCell>Endereço</TableCell>
+              {isSmallUp && (
+                <>
+                  <TableCell>Telefone</TableCell>
+                  <TableCell>Endereço</TableCell>
+                </>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -51,8 +65,12 @@ export function CustomersList() {
               <TableRow key={customer.id}>
                 <TableCell>{customer.name}</TableCell>
                 <TableCell>{customer.email}</TableCell>
-                <TableCell>{customer.phone}</TableCell>
-                <TableCell>{customer.address}</TableCell>
+                {isSmallUp && (
+                  <>
+                    <TableCell>{customer.phone}</TableCell>
+                    <TableCell>{customer.address}</TableCell>
+                  </>
+                )}
               </TableRow>
             ))}
           </TableBody>

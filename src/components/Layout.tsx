@@ -151,12 +151,22 @@ export function Layout({ children }: LayoutProps) {
         component="main"
         sx={{
           flexGrow: 1,
-          p: 3,
-          width: { sm: `calc(100% - ${drawerWidth}px)` },
+          p: { xs: 1, sm: 3 },
+          width: { xs: "100%", sm: `calc(100% - ${drawerWidth}px)` },
+          minWidth: 0,
+          overflowX: "auto",
         }}
       >
         <Toolbar />
-        {children}
+        <Box
+          sx={{
+            width: "100%",
+            display: "block",
+            overflowX: "auto",
+          }}
+        >
+          {children}
+        </Box>
       </Box>
     </Box>
   );

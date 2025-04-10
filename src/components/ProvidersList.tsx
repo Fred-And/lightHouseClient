@@ -12,6 +12,8 @@ import {
   Button,
   IconButton,
   Tooltip,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -27,6 +29,8 @@ export function ProvidersList() {
   const [selectedProvider, setSelectedProvider] = React.useState<number | null>(
     null
   );
+  const theme = useTheme();
+  const isSmallUp = useMediaQuery(theme.breakpoints.up("sm"));
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -49,13 +53,19 @@ export function ProvidersList() {
         <Typography variant="h4">Fornecedores</Typography>
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={isSmallUp ? <AddIcon /> : undefined}
           onClick={() => {
             setSelectedProvider(null);
             setIsProviderFormOpen(true);
           }}
+          sx={{
+            minWidth: { xs: "48px", sm: "auto" },
+            "& .MuiButton-startIcon": {
+              margin: isSmallUp ? "auto" : 0,
+            },
+          }}
         >
-          Adicionar Fornecedor
+          {!isSmallUp ? <AddIcon /> : "Adicionar Fornecedor"}
         </Button>
       </Box>
 
@@ -64,10 +74,13 @@ export function ProvidersList() {
           <TableHead>
             <TableRow>
               <TableCell>Nome</TableCell>
-              <TableCell>Email</TableCell>
-              <TableCell>Telefone</TableCell>
-              <TableCell>Endereço</TableCell>
-              <TableCell>NIF</TableCell>
+              {isSmallUp && (
+                <>
+                  <TableCell>Email</TableCell>
+                  <TableCell>Telefone</TableCell>
+                  <TableCell>Endereço</TableCell>
+                </>
+              )}
               <TableCell align="center">Ações</TableCell>
             </TableRow>
           </TableHead>
@@ -75,10 +88,13 @@ export function ProvidersList() {
             {providers?.map((provider) => (
               <TableRow key={provider.id}>
                 <TableCell>{provider.name}</TableCell>
-                <TableCell>{provider.email}</TableCell>
-                <TableCell>{provider.phone}</TableCell>
-                <TableCell>{provider.address}</TableCell>
-                <TableCell>{provider.taxId}</TableCell>
+                {isSmallUp && (
+                  <>
+                    <TableCell>{provider.email}</TableCell>
+                    <TableCell>{provider.phone}</TableCell>
+                    <TableCell>{provider.address}</TableCell>
+                  </>
+                )}
                 <TableCell align="center">
                   <Tooltip title="Editar">
                     <IconButton

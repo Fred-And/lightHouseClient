@@ -12,6 +12,9 @@ import {
   FormControl,
   InputLabel,
   Select,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import { Delete as DeleteIcon } from "@mui/icons-material";
 import { useCustomers } from "../hooks/useCustomers";
@@ -19,11 +22,18 @@ import { useProducts } from "../hooks/useProducts";
 import { OrderFormData, OrderItem } from "../hooks/useOrders";
 
 interface OrderFormProps {
+  open: boolean;
+  onClose: () => void;
   onSubmit: (data: OrderFormData) => Promise<void>;
   initialData?: OrderFormData | null;
 }
 
-export function OrderForm({ onSubmit, initialData }: OrderFormProps) {
+export function OrderForm({
+  open,
+  onClose,
+  onSubmit,
+  initialData,
+}: OrderFormProps) {
   const { customers } = useCustomers();
   const { products } = useProducts();
   const [formData, setFormData] = React.useState<OrderFormData>({
@@ -175,190 +185,202 @@ export function OrderForm({ onSubmit, initialData }: OrderFormProps) {
   );
 
   return (
-    <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
-      <Grid container spacing={2}>
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <InputLabel>Cliente</InputLabel>
-            <Select
-              value={formData.customerId}
-              onChange={handleCustomerChange}
-              label="Cliente"
-              required
-            >
-              {customers?.map((customer) => (
-                <MenuItem key={customer.id} value={customer.id}>
-                  {customer.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Número do Pedido"
-            name="orderNumber"
-            value={formData.orderNumber}
-            onChange={handleChange}
-            required
-          />
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <FormControl fullWidth>
-            <InputLabel>Status</InputLabel>
-            <Select
-              value={formData.productionStatus}
-              onChange={handleStatusChange}
-              label="Status"
-              required
-            >
-              <MenuItem value="received">Recebido</MenuItem>
-              <MenuItem value="started">Iniciado</MenuItem>
-              <MenuItem value="in_progress">Em Produção</MenuItem>
-              <MenuItem value="done">Concluído</MenuItem>
-            </Select>
-          </FormControl>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <TextField
-            fullWidth
-            label="Data do Pedido"
-            name="orderDate"
-            type="date"
-            value={formData.orderDate.split("T")[0]}
-            onChange={handleChange}
-            required
-            InputLabelProps={{ shrink: true }}
-          />
-        </Grid>
-        <Grid item xs={12}>
-          <TextField
-            fullWidth
-            label="Descrição"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            multiline
-            rows={3}
-          />
-        </Grid>
-
-        <Grid item xs={12}>
-          <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>
-            Adicionar Item
-          </Typography>
+    <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
+      <form onSubmit={handleSubmit}>
+        <DialogTitle>
+          {initialData ? "Editar Pedido" : "Criar Pedido"}
+        </DialogTitle>
+        <DialogContent>
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={4}>
+            <Grid item xs={12} sm={6}>
               <FormControl fullWidth>
-                <InputLabel>Produto</InputLabel>
+                <InputLabel>Cliente</InputLabel>
                 <Select
-                  value={currentItem.productId || ""}
-                  onChange={handleProductChange}
-                  label="Produto"
+                  value={formData.customerId}
+                  onChange={handleCustomerChange}
+                  label="Cliente"
+                  required
                 >
-                  {regularProducts?.map((product) => (
-                    <MenuItem key={product.id} value={product.id}>
-                      {product.name}
+                  {customers?.map((customer) => (
+                    <MenuItem key={customer.id} value={customer.id}>
+                      {customer.name}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={4}>
-              <FormControl fullWidth>
-                <InputLabel>Impressão</InputLabel>
-                <Select
-                  value={currentItem.printId || ""}
-                  onChange={handlePrintChange}
-                  label="Impressão"
-                >
-                  <MenuItem value="">Nenhuma</MenuItem>
-                  {prints?.map((print) => (
-                    <MenuItem key={print.id} value={print.id}>
-                      {print.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} sm={2}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
-                label="Quantidade"
-                name="quantity"
-                type="number"
-                value={currentItem.quantity || ""}
-                onChange={handleItemChange}
-                inputProps={{ min: 1 }}
+                label="Número do Pedido"
+                name="orderNumber"
+                value={formData.orderNumber}
+                onChange={handleChange}
+                required
               />
             </Grid>
-            <Grid item xs={12} sm={2}>
-              <Button
-                variant="contained"
-                onClick={addItem}
+            <Grid item xs={12} sm={6}>
+              <FormControl fullWidth>
+                <InputLabel>Status</InputLabel>
+                <Select
+                  value={formData.productionStatus}
+                  onChange={handleStatusChange}
+                  label="Status"
+                  required
+                >
+                  <MenuItem value="received">Recebido</MenuItem>
+                  <MenuItem value="started">Iniciado</MenuItem>
+                  <MenuItem value="in_progress">Em Produção</MenuItem>
+                  <MenuItem value="done">Concluído</MenuItem>
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <TextField
                 fullWidth
-                sx={{ height: "56px" }}
-                disabled={!currentItem.productId || !currentItem.quantity}
+                label="Data do Pedido"
+                name="orderDate"
+                type="date"
+                value={formData.orderDate.split("T")[0]}
+                onChange={handleChange}
+                required
+                InputLabelProps={{ shrink: true }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                label="Descrição"
+                name="description"
+                value={formData.description}
+                onChange={handleChange}
+                multiline
+                rows={3}
+              />
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>
+                Adicionar Item
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>Produto</InputLabel>
+                    <Select
+                      value={currentItem.productId || ""}
+                      onChange={handleProductChange}
+                      label="Produto"
+                    >
+                      {regularProducts?.map((product) => (
+                        <MenuItem key={product.id} value={product.id}>
+                          {product.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <FormControl fullWidth>
+                    <InputLabel>Impressão</InputLabel>
+                    <Select
+                      value={currentItem.printId || ""}
+                      onChange={handlePrintChange}
+                      label="Impressão"
+                    >
+                      <MenuItem value="">Nenhuma</MenuItem>
+                      {prints?.map((print) => (
+                        <MenuItem key={print.id} value={print.id}>
+                          {print.name}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <TextField
+                    fullWidth
+                    label="Quantidade"
+                    name="quantity"
+                    type="number"
+                    value={currentItem.quantity || ""}
+                    onChange={handleItemChange}
+                    inputProps={{ min: 1 }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={2}>
+                  <Button
+                    variant="contained"
+                    onClick={addItem}
+                    fullWidth
+                    sx={{ height: "56px" }}
+                    disabled={!currentItem.productId || !currentItem.quantity}
+                  >
+                    Adicionar
+                  </Button>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>
+                Itens do Pedido
+              </Typography>
+              {formData.items.map((item, index) => {
+                const product = products?.find((p) => p.id === item.productId);
+                const print = item.printId
+                  ? products?.find((p) => p.id === item.printId)
+                  : null;
+
+                return (
+                  <Card key={index} sx={{ mb: 2 }}>
+                    <CardContent>
+                      <Grid container alignItems="center" spacing={2}>
+                        <Grid item xs>
+                          <Typography variant="subtitle1">
+                            {product?.name}
+                            {print && ` + ${print.name}`}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Quantidade: {item.quantity}
+                          </Typography>
+                          <Typography variant="body2" color="text.secondary">
+                            Total: €{" "}
+                            {calculateItemTotal(
+                              item.quantity,
+                              item.productUnitPrice,
+                              item.printUnitPrice
+                            )}
+                          </Typography>
+                        </Grid>
+                        <Grid item>
+                          <IconButton
+                            onClick={() => removeItem(index)}
+                            color="error"
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </Grid>
+                      </Grid>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </Grid>
+
+            <Grid item xs={12}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
               >
-                Adicionar
+                {initialData ? "Atualizar Pedido" : "Criar Pedido"}
               </Button>
             </Grid>
           </Grid>
-        </Grid>
-
-        <Grid item xs={12}>
-          <Typography variant="h6" sx={{ mt: 2, mb: 2 }}>
-            Itens do Pedido
-          </Typography>
-          {formData.items.map((item, index) => {
-            const product = products?.find((p) => p.id === item.productId);
-            const print = item.printId
-              ? products?.find((p) => p.id === item.printId)
-              : null;
-
-            return (
-              <Card key={index} sx={{ mb: 2 }}>
-                <CardContent>
-                  <Grid container alignItems="center" spacing={2}>
-                    <Grid item xs>
-                      <Typography variant="subtitle1">
-                        {product?.name}
-                        {print && ` + ${print.name}`}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Quantidade: {item.quantity}
-                      </Typography>
-                      <Typography variant="body2" color="text.secondary">
-                        Total: €{" "}
-                        {calculateItemTotal(
-                          item.quantity,
-                          item.productUnitPrice,
-                          item.printUnitPrice
-                        )}
-                      </Typography>
-                    </Grid>
-                    <Grid item>
-                      <IconButton
-                        onClick={() => removeItem(index)}
-                        color="error"
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Grid>
-                  </Grid>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </Grid>
-
-        <Grid item xs={12}>
-          <Button type="submit" fullWidth variant="contained" color="primary">
-            {initialData ? "Atualizar Pedido" : "Criar Pedido"}
-          </Button>
-        </Grid>
-      </Grid>
-    </Box>
+        </DialogContent>
+      </form>
+    </Dialog>
   );
 }

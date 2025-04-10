@@ -26,7 +26,17 @@ export function OrdersPage() {
       productionStatus: order.productionStatus || "received",
       description: order.description,
       orderDate: order.orderDate || new Date().toISOString(),
-      items: order.orderItems || [],
+      items:
+        order.orderItems?.map((item) => ({
+          id: item.id,
+          productId: item.productId,
+          printId: item.printId,
+          quantity: item.quantity,
+          productUnitPrice: item.unitPrice,
+          printUnitPrice: 0, // Since this is not in GetOrderItem, defaulting to 0
+          product: item.product,
+          print: item.print,
+        })) || [],
     });
     setIsOrderFormOpen(true);
   };
@@ -83,7 +93,12 @@ export function OrdersPage() {
           {editingOrder ? "Editar Pedido" : "Novo Pedido"}
         </DialogTitle>
         <DialogContent>
-          <OrderForm onSubmit={handleSubmit} initialData={editingOrder} />
+          <OrderForm
+            open={isOrderFormOpen}
+            onClose={() => setIsOrderFormOpen(false)}
+            onSubmit={handleSubmit}
+            initialData={editingOrder}
+          />
         </DialogContent>
       </Dialog>
     </Box>

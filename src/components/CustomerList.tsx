@@ -55,7 +55,7 @@ export function CustomerList() {
         style={{ marginBottom: 16 }}
         onClick={handleAdd}
       >
-        Add Customer
+        Novo Cliente
       </Button>
       <TableContainer component={Paper}>
         <Table>

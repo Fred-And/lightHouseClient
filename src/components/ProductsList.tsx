@@ -12,11 +12,15 @@ import {
   Button,
   IconButton,
   Tooltip,
+  useTheme,
+  useMediaQuery,
+  TextField,
 } from "@mui/material";
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  Search as SearchIcon,
 } from "@mui/icons-material";
 import { useProducts } from "../hooks/useProducts";
 import { ProductForm } from "./ProductForm";
@@ -27,10 +31,20 @@ export function ProductsList() {
   const [selectedProduct, setSelectedProduct] = React.useState<number | null>(
     null
   );
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const theme = useTheme();
+  const isSmallUp = useMediaQuery(theme.breakpoints.up("sm"));
 
   if (isLoading) {
     return <div>Loading...</div>;
   }
+
+  const filteredProducts = products?.filter(
+    (product) =>
+      product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.provider.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      product.category.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const handleEdit = (productId: number) => {
     setSelectedProduct(productId);
@@ -49,14 +63,36 @@ export function ProductsList() {
         <Typography variant="h4">Produtos</Typography>
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={isSmallUp ? <AddIcon /> : undefined}
           onClick={() => {
             setSelectedProduct(null);
             setIsProductFormOpen(true);
           }}
+          sx={{
+            minWidth: { xs: "48px", sm: "auto" },
+            "& .MuiButton-startIcon": {
+              margin: isSmallUp ? "auto" : 0,
+            },
+          }}
         >
-          Adicionar Produto
+          {!isSmallUp ? <AddIcon /> : "Adicionar Produto"}
         </Button>
+      </Box>
+
+      <Box sx={{ mb: 3 }}>
+        <TextField
+          fullWidth
+          variant="outlined"
+          placeholder="Buscar produtos por nome, fornecedor ou categoria..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <SearchIcon sx={{ color: "action.active", mr: 1 }} />
+            ),
+          }}
+          size="small"
+        />
       </Box>
 
       <TableContainer component={Paper}>
@@ -64,22 +100,30 @@ export function ProductsList() {
           <TableHead>
             <TableRow>
               <TableCell>Nome</TableCell>
-              <TableCell>Fornecedor</TableCell>
-              <TableCell>Categoria</TableCell>
-              <TableCell align="right">Preço Base</TableCell>
+              {isSmallUp && (
+                <>
+                  <TableCell>Fornecedor</TableCell>
+                  <TableCell>Categoria</TableCell>
+                  <TableCell align="right">Preço Base</TableCell>
+                </>
+              )}
               <TableCell align="right">Preço Total</TableCell>
               <TableCell align="center">Ações</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {products?.map((product) => (
+            {filteredProducts?.map((product) => (
               <TableRow key={product.id}>
                 <TableCell>{product.name}</TableCell>
-                <TableCell>{product.provider.name}</TableCell>
-                <TableCell>{product.category.name}</TableCell>
-                <TableCell align="right">
-                  € {Number(product.rawPrice).toFixed(2)}
-                </TableCell>
+                {isSmallUp && (
+                  <>
+                    <TableCell>{product.provider.name}</TableCell>
+                    <TableCell>{product.category.name}</TableCell>
+                    <TableCell align="right">
+                      € {Number(product.rawPrice).toFixed(2)}
+                    </TableCell>
+                  </>
+                )}
                 <TableCell align="right">
                   € {Number(product.totalPrice).toFixed(2)}
                 </TableCell>

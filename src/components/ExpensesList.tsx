@@ -16,6 +16,8 @@ import {
   FormControl,
   InputLabel,
   IconButton,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
 import {
   Add as AddIcon,
@@ -32,6 +34,8 @@ export function ExpensesList() {
   const [isExpenseFormOpen, setIsExpenseFormOpen] = React.useState(false);
   const [selectedType, setSelectedType] = React.useState<string>("all");
   const [sortOrder, setSortOrder] = React.useState<SortOrder>("desc");
+  const theme = useTheme();
+  const isSmallUp = useMediaQuery(theme.breakpoints.up("sm"));
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -89,10 +93,16 @@ export function ExpensesList() {
         <Typography variant="h4">Movimentos</Typography>
         <Button
           variant="contained"
-          startIcon={<AddIcon />}
+          startIcon={isSmallUp ? <AddIcon /> : undefined}
           onClick={() => setIsExpenseFormOpen(true)}
+          sx={{
+            minWidth: { xs: "48px", sm: "auto" },
+            "& .MuiButton-startIcon": {
+              margin: isSmallUp ? "auto" : 0,
+            },
+          }}
         >
-          Adicionar Movimento
+          {!isSmallUp ? <AddIcon /> : "Adicionar Movimento"}
         </Button>
       </Box>
 

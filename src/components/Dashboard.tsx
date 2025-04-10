@@ -10,12 +10,15 @@ import { ExpenseForm } from "./ExpenseForm";
 import { ProductForm } from "./ProductForm";
 import { ProviderForm } from "./ProviderForm";
 import { Layout } from "./Layout";
+import { useOrders, OrderFormData, Order } from "../hooks/useOrders";
+import { OrderForm } from "../components/OrderForm";
 
 export function DashboardComponent() {
   const { balance } = useExpenses();
   const [isExpenseFormOpen, setIsExpenseFormOpen] = React.useState(false);
   const [isProductFormOpen, setIsProductFormOpen] = React.useState(false);
   const [isProviderFormOpen, setIsProviderFormOpen] = React.useState(false);
+  const [isOrderFormOpen, setIsOrderFormOpen] = React.useState(false);
 
   return (
     <Layout>
@@ -79,23 +82,40 @@ export function DashboardComponent() {
             </Paper>
           </Grid>
 
-          <Grid item xs={12}>
+          <Grid item xs={12} md={4} sx={{ order: { xs: -1, sm: 0 } }}>
             <Paper sx={{ p: 2 }}>
               <Box
                 sx={{
                   display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
+                  flexDirection: { xs: "column", sm: "row" },
+                  justifyContent: { xs: "center", sm: "space-between" },
+                  alignItems: { xs: "center", sm: "center" },
                   mb: 2,
                 }}
               >
-                <Typography variant="h6">Ações Rápidas</Typography>
-                <Box>
+                <Typography variant="h6" sx={{ mb: { xs: 2, sm: 0 } }}>
+                  Ações Rápidas
+                </Typography>
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    gap: 2,
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    startIcon={<AddIcon />}
+                    onClick={() => setIsOrderFormOpen(true)}
+                    sx={{ mr: 1, mb: 1, minWidth: 200 }}
+                  >
+                    Novo Pedido
+                  </Button>
                   <Button
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={() => setIsExpenseFormOpen(true)}
-                    sx={{ mr: 1 }}
+                    sx={{ mr: 1, mb: 1, minWidth: 200 }}
                   >
                     Novo Movimento
                   </Button>
@@ -103,7 +123,7 @@ export function DashboardComponent() {
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={() => setIsProductFormOpen(true)}
-                    sx={{ mr: 1 }}
+                    sx={{ mr: 1, mb: 1, minWidth: 200 }}
                   >
                     Novo Produto
                   </Button>
@@ -111,6 +131,7 @@ export function DashboardComponent() {
                     variant="contained"
                     startIcon={<AddIcon />}
                     onClick={() => setIsProviderFormOpen(true)}
+                    sx={{ mr: 1, mb: 1, minWidth: 200 }}
                   >
                     Novo Fornecedor
                   </Button>
@@ -144,6 +165,13 @@ export function DashboardComponent() {
             setIsProviderFormOpen(false);
           }}
           providerId={null}
+        />
+        <OrderForm
+          open={isOrderFormOpen}
+          onClose={() => setIsOrderFormOpen(false)}
+          onSubmit={async (data) => {
+            setIsOrderFormOpen(false);
+          }}
         />
       </Box>
     </Layout>
