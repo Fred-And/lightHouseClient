@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../services/api";
 
 interface LoginCredentials {
@@ -21,6 +21,8 @@ interface AuthResponse {
 }
 
 export function useAuth() {
+  const queryClient = useQueryClient();
+
   const register = useMutation({
     mutationFn: async (data: RegisterData) => {
       const response = await api.post<AuthResponse>("/auth/register", data);
@@ -33,12 +35,20 @@ export function useAuth() {
       const response = await api.post<AuthResponse>("/auth/login", credentials);
       return response.data;
     },
+    onSuccess: () => {
+      // Invalidate auth query to trigger a refetch
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
+    },
   });
 
   const logout = useMutation({
     mutationFn: async () => {
       const response = await api.post<{ message: string }>("/auth/logout");
       return response.data;
+    },
+    onSuccess: () => {
+      // Invalidate auth query to trigger a refetch
+      queryClient.invalidateQueries({ queryKey: ["auth"] });
     },
   });
 
