@@ -10,7 +10,6 @@ import { ExpenseForm } from "./ExpenseForm";
 import { ProductForm } from "./ProductForm";
 import { ProviderForm } from "./ProviderForm";
 import { Layout } from "./Layout";
-import { useOrders, OrderFormData, Order } from "../hooks/useOrders";
 import { OrderForm } from "../components/OrderForm";
 
 export function DashboardComponent() {
