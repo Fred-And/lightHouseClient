@@ -29,6 +29,15 @@ export interface GetOrderItem {
   orderId: number;
   productId: number;
   printId: number;
+
+  // Pricing components snapshot
+  baseCost: number;
+  printCost?: number;
+  packagingCost?: number;
+  shippingCost?: number;
+  laborCost?: number;
+  marginPercentage?: number;
+
   product?: {
     id: number;
     name: string;

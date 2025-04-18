@@ -97,44 +97,36 @@ export function OrderForm({
   const handleProductChange = (e: any) => {
     const productId = e.target.value;
     const product = products?.find((p) => p.id === productId);
-    const print = currentItem.printId
-      ? products?.find((p) => p.id === currentItem.printId)
-      : null;
+    // const print = currentItem.printId
+    //   ? products?.find((p) => p.id === currentItem.printId)
+    //   : null;
 
     setCurrentItem((prev) => ({
       ...prev,
       productId,
       unitPrice: product?.totalPrice || 0,
-      total: calculateItemTotal(
-        prev.quantity || 1,
-        product?.totalPrice || 0,
-        print?.totalPrice || 0
-      ),
+      total: calculateItemTotal(prev.quantity || 1, product?.totalPrice || 0),
     }));
   };
 
-  const handlePrintChange = (e: any) => {
-    const printId = e.target.value || undefined;
-    const print = printId ? products?.find((p) => p.id === printId) : null;
-    const product = products?.find((p) => p.id === currentItem.productId);
+  // const handlePrintChange = (e: any) => {
+  //   const printId = e.target.value || undefined;
+  //   const print = printId ? products?.find((p) => p.id === printId) : null;
+  //   const product = products?.find((p) => p.id === currentItem.productId);
 
-    setCurrentItem((prev) => ({
-      ...prev,
-      printId,
-      total: calculateItemTotal(
-        prev.quantity || 1,
-        product?.totalPrice || 0,
-        print?.totalPrice || 0
-      ),
-    }));
-  };
+  //   setCurrentItem((prev) => ({
+  //     ...prev,
+  //     printId,
+  //     total: calculateItemTotal(
+  //       prev.quantity || 1,
+  //       product?.totalPrice || 0,
+  //       print?.totalPrice || 0
+  //     ),
+  //   }));
+  // };
 
-  const calculateItemTotal = (
-    quantity: number,
-    productPrice: number,
-    printPrice: number
-  ) => {
-    return (productPrice + (printPrice || 0)) * quantity;
+  const calculateItemTotal = (quantity: number, productPrice: number) => {
+    return productPrice * quantity;
   };
 
   const addItem = () => {
@@ -178,7 +170,7 @@ export function OrderForm({
     onSubmit(formData);
   };
 
-  const prints = products?.filter((p) => p.category.name === "Estampa");
+  // const prints = products?.filter((p) => p.category.name === "Estampa");
   const regularProducts = products?.filter(
     (p) => p.category.name === "Produto"
   );
@@ -263,7 +255,7 @@ export function OrderForm({
                 Adicionar Item
               </Typography>
               <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
+                <Grid item xs={12} sm={6}>
                   <FormControl fullWidth>
                     <InputLabel>Produto</InputLabel>
                     <Select
@@ -279,7 +271,7 @@ export function OrderForm({
                     </Select>
                   </FormControl>
                 </Grid>
-                <Grid item xs={12} sm={4}>
+                {/* <Grid item xs={12} sm={4}>
                   <FormControl fullWidth>
                     <InputLabel>Impressão</InputLabel>
                     <Select
@@ -294,9 +286,9 @@ export function OrderForm({
                         </MenuItem>
                       ))}
                     </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={2}>
+                  </FormControl>7
+                </Grid> */}
+                <Grid item xs={12} sm={3}>
                   <TextField
                     fullWidth
                     label="Quantidade"
@@ -307,7 +299,7 @@ export function OrderForm({
                     inputProps={{ min: 1 }}
                   />
                 </Grid>
-                <Grid item xs={12} sm={2}>
+                <Grid item xs={12} sm={3}>
                   <Button
                     variant="contained"
                     onClick={addItem}
@@ -347,9 +339,8 @@ export function OrderForm({
                             Total: €{" "}
                             {calculateItemTotal(
                               item.quantity,
-                              item.productUnitPrice,
-                              item.printUnitPrice
-                            )}
+                              item.productUnitPrice
+                            ).toFixed(2)}
                           </Typography>
                         </Grid>
                         <Grid item>

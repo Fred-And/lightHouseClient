@@ -11,6 +11,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Typography,
 } from "@mui/material";
 import { useProducts } from "../hooks/useProducts";
 import { useProviders } from "../hooks/useProviders";
@@ -36,7 +37,12 @@ export function ProductForm({
     name: "",
     sku: "",
     description: "",
-    rawPrice: "",
+    baseCost: "",
+    printCost: "",
+    packagingCost: "",
+    shippingCost: "",
+    laborCost: "",
+    marginPercentage: "30", // Default margin is 30%
     providerId: "",
     categoryId: "",
   });
@@ -45,11 +51,23 @@ export function ProductForm({
     if (productId && products) {
       const product = products.find((p) => p.id === productId);
       if (product) {
+        // For existing products, use the stored pricing components
         setFormData({
           name: product.name,
           sku: product.sku,
-          description: product.description,
-          rawPrice: product.rawPrice.toString(),
+          description: product.description || "",
+          baseCost: product.rawPrice.toString(),
+          printCost: product.printCost ? product.printCost.toString() : "",
+          packagingCost: product.packagingCost
+            ? product.packagingCost.toString()
+            : "",
+          shippingCost: product.shippingCost
+            ? product.shippingCost.toString()
+            : "",
+          laborCost: product.laborCost ? product.laborCost.toString() : "",
+          marginPercentage: product.marginPercentage
+            ? product.marginPercentage.toString()
+            : "30",
           providerId: product.provider.id.toString(),
           categoryId: product.category.id.toString(),
         });
@@ -59,7 +77,12 @@ export function ProductForm({
         name: "",
         sku: "",
         description: "",
-        rawPrice: "",
+        baseCost: "",
+        printCost: "",
+        packagingCost: "",
+        shippingCost: "",
+        laborCost: "",
+        marginPercentage: "30", // Default margin
         providerId: "",
         categoryId: "",
       });
@@ -70,7 +93,20 @@ export function ProductForm({
     e.preventDefault();
     const data = {
       ...formData,
-      rawPrice: parseFloat(formData.rawPrice),
+      baseCost: parseFloat(formData.baseCost),
+      printCost: formData.printCost
+        ? parseFloat(formData.printCost)
+        : undefined,
+      packagingCost: formData.packagingCost
+        ? parseFloat(formData.packagingCost)
+        : undefined,
+      shippingCost: formData.shippingCost
+        ? parseFloat(formData.shippingCost)
+        : undefined,
+      laborCost: formData.laborCost
+        ? parseFloat(formData.laborCost)
+        : undefined,
+      marginPercentage: parseInt(formData.marginPercentage),
       providerId: parseInt(formData.providerId),
       categoryId: parseInt(formData.categoryId),
     };
@@ -152,17 +188,83 @@ export function ProductForm({
                 ))}
               </Select>
             </FormControl>
-            <TextField
-              label="Preço Base"
-              type="number"
-              value={formData.rawPrice}
-              onChange={(e) =>
-                setFormData({ ...formData, rawPrice: e.target.value })
-              }
-              required
-              fullWidth
-              inputProps={{ min: 0, step: 0.01 }}
-            />
+            {/* Pricing Section */}
+            <Box
+              sx={{ border: "1px solid #e0e0e0", p: 2, borderRadius: 1, mt: 2 }}
+            >
+              <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                Componentes de Preço
+              </Typography>
+              <Box
+                sx={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}
+              >
+                <TextField
+                  label="Custo Base (Fornecedor)"
+                  type="number"
+                  value={formData.baseCost}
+                  onChange={(e) =>
+                    setFormData({ ...formData, baseCost: e.target.value })
+                  }
+                  required
+                  fullWidth
+                  inputProps={{ min: 0, step: 0.01 }}
+                />
+                <TextField
+                  label="Custo de Impressão"
+                  type="number"
+                  value={formData.printCost}
+                  onChange={(e) =>
+                    setFormData({ ...formData, printCost: e.target.value })
+                  }
+                  fullWidth
+                  inputProps={{ min: 0, step: 0.01 }}
+                />
+                <TextField
+                  label="Custo de Embalagem"
+                  type="number"
+                  value={formData.packagingCost}
+                  onChange={(e) =>
+                    setFormData({ ...formData, packagingCost: e.target.value })
+                  }
+                  fullWidth
+                  inputProps={{ min: 0, step: 0.01 }}
+                />
+                <TextField
+                  label="Custo de Envio"
+                  type="number"
+                  value={formData.shippingCost}
+                  onChange={(e) =>
+                    setFormData({ ...formData, shippingCost: e.target.value })
+                  }
+                  fullWidth
+                  inputProps={{ min: 0, step: 0.01 }}
+                />
+                <TextField
+                  label="Custo de Mão de Obra"
+                  type="number"
+                  value={formData.laborCost}
+                  onChange={(e) =>
+                    setFormData({ ...formData, laborCost: e.target.value })
+                  }
+                  fullWidth
+                  inputProps={{ min: 0, step: 0.01 }}
+                />
+                <TextField
+                  label="Margem (%)"
+                  type="number"
+                  value={formData.marginPercentage}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      marginPercentage: e.target.value,
+                    })
+                  }
+                  required
+                  fullWidth
+                  inputProps={{ min: 0, max: 100, step: 1 }}
+                />
+              </Box>
+            </Box>
           </Box>
         </DialogContent>
         <DialogActions>

@@ -8,6 +8,11 @@ interface Product {
   description: string;
   rawPrice: number;
   totalPrice: number;
+  printCost?: number;
+  packagingCost?: number;
+  shippingCost?: number;
+  laborCost?: number;
+  marginPercentage?: number;
   provider: {
     id: number;
     name: string;
@@ -22,7 +27,12 @@ interface ProductFormData {
   name: string;
   sku: string;
   description: string;
-  rawPrice: number;
+  baseCost: number;
+  printCost?: number;
+  packagingCost?: number;
+  shippingCost?: number;
+  laborCost?: number;
+  marginPercentage?: number;
   providerId: number;
   categoryId: number;
 }
